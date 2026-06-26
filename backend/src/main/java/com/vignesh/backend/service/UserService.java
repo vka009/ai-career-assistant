@@ -1,19 +1,28 @@
 package com.vignesh.backend.service;
 
+import com.vignesh.backend.dto.LoginRequest;
+import com.vignesh.backend.dto.LoginResponse;
 import com.vignesh.backend.entity.User;
 import com.vignesh.backend.repository.UserRepository;
+import com.vignesh.backend.security.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository,BCryptPasswordEncoder passwordEncoder) {
+    @Autowired
+    private JwtService jwtUtil;
+
+    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -29,4 +38,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public LoginResponse login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        return new LoginResponse(token, "Login successful");
+    }
 }
