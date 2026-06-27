@@ -1,4 +1,4 @@
-package com.vignesh.backend.dto;
+package com.vignesh.backend.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
+public class LoginResponse {
 
-    private String email;
-    private String password;
+    private String token;
+    private String message;
 }

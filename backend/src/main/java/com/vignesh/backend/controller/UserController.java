@@ -1,9 +1,12 @@
 package com.vignesh.backend.controller;
 
-import com.vignesh.backend.dto.LoginRequest;
-import com.vignesh.backend.dto.LoginResponse;
+import com.vignesh.backend.dto.request.LoginRequest;
+import com.vignesh.backend.dto.response.LoginResponse;
+import com.vignesh.backend.dto.request.RegisterRequest;
+import com.vignesh.backend.dto.response.RegisterResponse;
 import com.vignesh.backend.entity.User;
 import com.vignesh.backend.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +23,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        System.out.println("******** REGISTER API HIT ********");
-        return userService.saveUser(user);
+    public ResponseEntity<RegisterResponse> register(
+            @Valid @RequestBody RegisterRequest request) {
+
+        return ResponseEntity.ok(userService.register(request));
     }
 
     @GetMapping
