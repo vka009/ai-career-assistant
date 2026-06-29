@@ -1,5 +1,6 @@
 package com.vignesh.backend.validation;
 
+import com.vignesh.backend.exception.FileValidationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,7 +26,7 @@ public class FileValidationService {
     }
     private void validateFileNotEmpty(MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("File must not be empty.");
+            throw new FileValidationException("File must not be empty.");
         }
     }
 
@@ -34,28 +35,28 @@ public class FileValidationService {
         String extension = getFileExtension(file);
 
         if (!ALLOWED_EXTENSIONS.contains(extension)) {
-            throw new IllegalArgumentException("Only PDF, DOC and DOCX files are allowed.");
+            throw new FileValidationException("Only PDF, DOC and DOCX files are allowed.");
         }
     }
 
     public void validateContentType(MultipartFile file) {
 
         if (!ALLOWED_CONTENT_TYPES.contains(file.getContentType())) {
-            throw new IllegalArgumentException("Invalid file type.");
+            throw new FileValidationException("Invalid file type.");
         }
     }
 
     public void validateFileSize(MultipartFile file) {
 
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException("File size must not exceed 5 MB.");
+            throw new FileValidationException("File size must not exceed 5 MB.");
         }
     }
 
     public String getFileExtension(MultipartFile file) {
         String fileName = file.getOriginalFilename();
         if (fileName == null || !fileName.contains(".")) {
-            throw new IllegalArgumentException("Invalid file name.");
+            throw new FileValidationException("Invalid file name.");
         }
         return fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
     }

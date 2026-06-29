@@ -4,6 +4,7 @@ import com.vignesh.backend.dto.request.LoginRequest;
 import com.vignesh.backend.dto.response.LoginResponse;
 import com.vignesh.backend.entity.User;
 import com.vignesh.backend.exception.InvalidCredentialsException;
+import com.vignesh.backend.exception.UserNotFoundException;
 import com.vignesh.backend.repository.UserRepository;
 import com.vignesh.backend.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -71,4 +72,11 @@ public class UserService {
         log.info("User logged in successfully: {}", user.getEmail());
         return new LoginResponse(token, "Login successful");
     }
+
+    public Long getUserIdByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(User::getId)
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
+    }
+
 }
